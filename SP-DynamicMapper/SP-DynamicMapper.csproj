@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>SP_DynamicMapper</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Camlex.Client.dll" Version="5.4.2" />
+    <PackageReference Include="Microsoft.SharePointOnline.CSOM" Version="16.1.24009.12000" />
+  </ItemGroup>
+
+</Project>
