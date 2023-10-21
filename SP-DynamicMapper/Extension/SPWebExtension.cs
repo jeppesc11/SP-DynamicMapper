@@ -1,41 +1,14 @@
 ﻿using CamlexNET;
 using Microsoft.SharePoint.Client;
 using SP_DynamicMapper.Attributes;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using SP_DynamicMapper.Extentions.Internal;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SP_DynamicMapper.Extentions
 {
-    public static class ListExtention
+    public static class SPWebExtension
     {
-        public static List GetById<T>(this ListCollection lists) where T : class
-        {
-            Guid guid = typeof(T).GetListGuid();
-
-            if (guid == Guid.Empty)
-            {
-                throw new System.Exception("List guid must be set");
-            }
-            return lists.GetById(guid);
-        }
-
-        public static List GetByTitle<T>(this ListCollection lists) where T : class
-        {
-            string title = typeof(T).GetListTitle();
-
-            if (string.IsNullOrEmpty(title))
-            {
-                throw new System.Exception("List title must be set");
-            }
-            return lists.GetByTitle(title);
-        }
-
         public static IEnumerable<T> GetItems<T>(this Microsoft.SharePoint.Client.Web web, params Expression<Func<T, object?>>[] expressions) where T : class, new()
         {
             List<Tuple<string, string, string>> joins = new List<Tuple<string, string, string>>();
@@ -76,7 +49,6 @@ namespace SP_DynamicMapper.Extentions
             return items.Select(p => p.ToObject<T>());
         }
 
-
         public static IEnumerable<T> GetItems<T>(this Microsoft.SharePoint.Client.Web web) where T : class, new()
         {
             ListItemCollection items = web.Lists.GetListByType<T>().GetItems(CamlQuery.CreateAllItemsQuery());
@@ -107,41 +79,6 @@ namespace SP_DynamicMapper.Extentions
             web.Context.ExecuteQuery();
 
             return listItem.ToObject<T>();
-        }
-
-        public static List GetListByType<T>(this ListCollection lists) where T : class, new()
-        {
-            Guid guid = typeof(T).GetListGuid();
-
-            if (guid != Guid.Empty)
-            {
-                return lists.GetById(guid);
-            }
-
-            string title = typeof(T).GetListTitle();
-
-            if (!string.IsNullOrEmpty(title))
-            {
-                return lists.GetByTitle(title);
-            }
-
-            throw new Exception("List guid or title must be set");
-        }
-
-        public static ListItem PopulateFromDictionary(this ListItem item, IDictionary<string, object?> dic)
-        {
-
-            foreach (var keyValuePair in dic)
-            {
-
-                if (keyValuePair.Key.ToLower() == "id")
-                {
-                    continue;
-                }
-
-                item[keyValuePair.Key] = keyValuePair.Value;
-            }
-            return item;
         }
     }
 }
