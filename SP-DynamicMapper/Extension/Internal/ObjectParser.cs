@@ -43,11 +43,19 @@ namespace SP_DynamicMapper.Extentions.Internal
 
             foreach (var item in source)
             {
-                PropertyInfo prop = GetPropertyInfoByAttributeInternalName(props, item);
+                PropertyInfo? prop = GetPropertyInfoByAttributeInternalName(props, item);
+
+                if (prop == null)
+                {
+                    continue;
+                }
 
                 if (item.Value.GetType() == typeof(FieldLookupValue))
                 {
-                    switch (TobjectType?.GetProperty(prop.Name)?.PropertyType.Name)
+                    Type type = Nullable.GetUnderlyingType(TobjectType!.GetProperty(prop.Name)!.PropertyType) ?? TobjectType!.GetProperty(prop.Name)!.PropertyType;
+                    string typeName = type.Name;
+
+                    switch (typeName)
                     {
                         case nameof(String):
                             TobjectType?.GetProperty(prop.Name)?.SetValue(Tobject, ((FieldLookupValue)item.Value).LookupValue, null);
@@ -72,7 +80,7 @@ namespace SP_DynamicMapper.Extentions.Internal
 
         #region Private Methods
 
-        private static PropertyInfo GetPropertyInfoByAttributeInternalName(PropertyInfo[] props, KeyValuePair<string, object> item)
+        private static PropertyInfo? GetPropertyInfoByAttributeInternalName(PropertyInfo[] props, KeyValuePair<string, object> item)
         {
             IEnumerable<PropertyInfo> selectedPropsByInternalName = props.Where(x => x.GetCustomAttribute<SPFieldAttribute>()?.InternalName.ToLower() == item.Key.ToLower());
 
@@ -81,7 +89,7 @@ namespace SP_DynamicMapper.Extentions.Internal
                 throw new Exception("Multiple properties with same internal name");
             }
 
-            return selectedPropsByInternalName.FirstOrDefault() ?? throw new Exception("Property not found");
+            return selectedPropsByInternalName.FirstOrDefault();
         }
 
         private static T TrackObjectChangesIfPossible<T>(T objToReturn) where T : class, new()

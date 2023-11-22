@@ -9,6 +9,7 @@ using TestApplication.Models;
 using SP_DynamicMapper.Extentions;
 using PnP.Core.Model.SharePoint;
 using Microsoft.Graph;
+using CamlexNET;
 
 namespace TestApplication
 {
@@ -51,14 +52,16 @@ namespace TestApplication
                     {
                         context.Load(context.Web);
 
-                        var items = context.Web.GetItems<EmployeeTaskModel>(x => x.Employeer_Name, x => x.Employeer_Phone);
+                        var items = context.Web.GetItems<EmployeeTaskModel>(x =>
+                        {
+                            x.Includes(p => p.Employeer_Name, p => p.Employeer_Phone);
+                            x.Where(p => p.EmployeerID == 6 && p.Title == "N/A");
+                        });
 
                         var item = items.FirstOrDefault();
                         item.Title = "N/A";
 
-                        //var changes = item.GetChanges();
-
-                        //var updateItem = context.Web.UpdateItem(item);
+                        var updateItem = context.Web.UpdateItemExpandedFields(item);
 
                         Console.WriteLine("Your site title is: " + context.Web.Title);
                     }

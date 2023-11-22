@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Microsoft.SharePoint.Client;
+using System.Reflection;
 
 namespace SP_DynamicMapper.Models
 {
@@ -12,7 +13,8 @@ namespace SP_DynamicMapper.Models
         {
             _OriginalValues = new Dictionary<string, object?>();
 
-            GetType().GetProperties().ToList().ForEach(property => {
+            GetType().GetProperties().ToList().ForEach(property =>
+            {
                 _OriginalValues.Add(property.Name, property.GetValue(this));
             });
 

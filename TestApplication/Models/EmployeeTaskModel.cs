@@ -1,5 +1,6 @@
 ﻿using Microsoft.SharePoint.Client;
 using SP_DynamicMapper.Attributes;
+using SP_DynamicMapper.Enums;
 using SP_DynamicMapper.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace TestApplication.Models
 {
     [SPList(listGuid: "128b4e17-691a-4e28-9934-7bd399ba907a", listTitle: "EmployeeTasks")]
-    internal class EmployeeTaskModel
+    internal class EmployeeTaskModel // : TrackModel<EmployeeTaskModel>
     {
         [SPField(internalName: "ID")]
         public int Id { get; set; }
@@ -21,7 +22,7 @@ namespace TestApplication.Models
         [SPField(internalName: "EmployeeTask_Done")]
         public bool? Done { get; set; }
 
-        [SPField(internalName: "EmployeeTask_Employeer")]
+        [SPField(internalName: "EmployeeTask_Employeer", SPFieldType.LookupId)]
         public int? EmployeerID { get; set; }
 
         //[SPField(internalName: "EmployeeTask_Employeer")]
